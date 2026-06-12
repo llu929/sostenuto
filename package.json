@@ -1,7 +1,7 @@
 {
   "name": "sostenuto",
   "version": "0.1.0",
-  "description": "Selective long-term memory for AI companions — chosen memories sustain, the rest fades. Named for the piano pedal.",
+  "description": "Selective long-term memory for AI companions \u2014 chosen memories sustain, the rest fades. Named for the piano pedal.",
   "type": "module",
   "license": "MIT",
   "exports": {
@@ -28,7 +28,31 @@
     "zod": "^3.23.0"
   },
   "keywords": [
-    "ai-companion", "memory", "long-term-memory", "mcp",
-    "semantic-search", "claude", "llm", "relational-memory"
+    "ai-companion",
+    "memory",
+    "long-term-memory",
+    "mcp",
+    "semantic-search",
+    "claude",
+    "llm",
+    "relational-memory"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/llu929/sostenuto.git"
+  },
+  "homepage": "https://github.com/llu929/sostenuto#readme",
+  "bugs": {
+    "url": "https://github.com/llu929/sostenuto/issues"
+  },
+  "author": "llu929",
+  "files": [
+    "src/",
+    "mcp/",
+    "db/",
+    "templates/",
+    "docs/",
+    "README.md",
+    "LICENSE"
   ]
 }
