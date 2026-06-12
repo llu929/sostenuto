@@ -1,0 +1,15 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Logs and OS noise
+*.log
+.DS_Store
+
+# Local user data — memories belong to the user, not the repo
+data/
+*.local.md
