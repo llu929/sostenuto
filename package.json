@@ -1,6 +1,6 @@
 {
   "name": "sostenuto",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Selective long-term memory for AI companions — chosen memories sustain, the rest fades. Named for the piano pedal.",
   "type": "module",
   "license": "MIT",
@@ -54,5 +54,9 @@
     "docs/",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "scripts": {
+    "start": "node mcp/server.js",
+    "test": "node test/smoke.mjs && node test/http.mjs"
+  }
 }

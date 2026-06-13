@@ -3,6 +3,70 @@
 Sostenuto is a library, not a service — it runs wherever your companion
 runs. These are the wiring patterns that work, learned in production.
 
+## The MCP server: local vs. remote
+
+`mcp/server.js` (the `sostenuto-mcp` bin) runs in two modes from the same
+code.
+
+**Local stdio (default).** No `PORT` set → it speaks MCP over stdio. This
+is what Claude Desktop / Claude Code spawn as a child process. Private by
+construction — only your machine can start it. Config:
+
+```json
+{
+  "mcpServers": {
+    "sostenuto": {
+      "command": "npx",
+      "args": ["-y", "-p", "sostenuto", "sostenuto-mcp"],
+      "env": { "SUPABASE_URL": "...", "SUPABASE_SERVICE_ROLE_KEY": "...", "VOYAGE_API_KEY": "..." }
+    }
+  }
+}
+```
+
+**Remote HTTP (for the web / mobile apps).** Set `PORT` (deploy platforms
+do this automatically) → it serves the MCP transport over HTTP so you can
+add it as a *custom remote connector*, which reaches Claude's web and
+mobile apps, not just Desktop. Stateless (each request is independent — no
+session map to break across restarts or instances) and **fail-closed**: it
+refuses to start without `SOSTENUTO_AUTH_TOKEN`, because a remote endpoint
+exposes your entire memory — and a service-role-key path — to the internet.
+
+```
+POST /mcp        the MCP transport
+Auth             Authorization: Bearer <SOSTENUTO_AUTH_TOKEN>
+                 ...or  /mcp?token=<token>  for clients that only take a URL
+GET  /health     liveness probe
+```
+
+### Deploying the remote server
+
+Any platform that runs a Node app works (`npm start` → `node mcp/server.js`;
+the platform's `PORT` triggers HTTP mode). Set four env vars:
+
+```
+SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, VOYAGE_API_KEY
+SOSTENUTO_AUTH_TOKEN   # a long random string you generate
+```
+
+Then add it as a custom connector in your Claude account
+(Settings → Connectors): the URL is `https://your-host/mcp`, and supply
+the token via the connector's auth header — or, if the connector UI only
+takes a URL, append `?token=<token>`.
+
+**Cold starts matter.** "Scale to zero" free tiers sleep after idle and
+take 30–60 s to wake — long enough that a phone request can time out
+before the tools respond. For a companion you reach occasionally, a small
+**always-on** instance (~$5/mo) is far more reliable than a sleeping free
+tier. The Supabase free tier is fine; it's the *server* process that
+shouldn't sleep.
+
+**Auth reality.** A custom remote connector is only as private as its
+token. Use a long random `SOSTENUTO_AUTH_TOKEN`, serve over HTTPS only
+(every platform terminates TLS for you), and rotate the token if it ever
+lands somewhere it shouldn't. The token is the whole gate — there's no
+per-user model here (Sostenuto is single-user by design).
+
 ## Where classification fires
 
 `closeSession()` needs to run when a session ends (or periodically during
