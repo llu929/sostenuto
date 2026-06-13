@@ -1,7 +1,7 @@
 {
   "name": "sostenuto",
-  "version": "0.1.0",
-  "description": "Selective long-term memory for AI companions \u2014 chosen memories sustain, the rest fades. Named for the piano pedal.",
+  "version": "0.1.1",
+  "description": "Selective long-term memory for AI companions — chosen memories sustain, the rest fades. Named for the piano pedal.",
   "type": "module",
   "license": "MIT",
   "exports": {

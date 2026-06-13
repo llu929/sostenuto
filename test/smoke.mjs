@@ -64,6 +64,12 @@ ok("sanitizeDomainType maps drifted values", () => {
   assert.equal(guidance.sanitizeDomainType("user", "fact").domain, "user_self");
   assert.equal(guidance.sanitizeDomainType("relational", "open_loop").type, "continuation");
 });
+ok("maxSensitivity fail-safe: unknown levels rank highest, never downgrade", () => {
+  assert.equal(guidance.maxSensitivity("high", "low"), "high");
+  // a legacy/unknown level must win over any known level, in either arg order
+  assert.equal(guidance.maxSensitivity("intimate", "high"), "intimate");
+  assert.equal(guidance.maxSensitivity("high", "intimate"), "intimate");
+});
 ok("inferArousal follows the 0.4/0.4/0.2 blend", () => {
   const a = guidance.inferArousal({ type: "fact", valence: 0.6, salience: 0.9 });
   assert.equal(a, Number((0.4 * 0.2 + 0.4 * 0.6 + 0.2 * 0.9).toFixed(3)));

@@ -43,9 +43,14 @@ export const VALID_SENSITIVITY = new Set(["low", "medium", "high"]);
 
 const SENSITIVITY_RANK = { low: 0, medium: 1, high: 2 };
 
-/** Higher-ranked sensitivity wins (used when merging on reinforce). */
+/**
+ * Higher-ranked sensitivity wins (used when merging on reinforce).
+ * Fail-safe: an unrecognized value (e.g. a legacy 'intimate' level from an
+ * older schema) ranks as the MOST sensitive, so a merge can never silently
+ * downgrade a level it can't classify.
+ */
 export function maxSensitivity(a, b) {
-  return (SENSITIVITY_RANK[a] ?? 0) >= (SENSITIVITY_RANK[b] ?? 0) ? a : b;
+  return (SENSITIVITY_RANK[a] ?? 99) >= (SENSITIVITY_RANK[b] ?? 99) ? a : b;
 }
 
 export function clamp(val, min, max) {
