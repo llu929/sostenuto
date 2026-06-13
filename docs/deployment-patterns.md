@@ -61,6 +61,26 @@ before the tools respond. For a companion you reach occasionally, a small
 tier. The Supabase free tier is fine; it's the *server* process that
 shouldn't sleep.
 
+### On Vercel (serverless)
+
+Vercel doesn't run a persistent process — it runs functions per request.
+Because Sostenuto's transport is stateless (no streaming, no warm
+session), it fits the serverless model well, and the repo ships a ready
+adapter: `api/mcp.js` (the MCP function), `api/health.js`, and a
+`vercel.json` that rewrites `/mcp` → the function.
+
+```
+vercel deploy        # from the repo root
+```
+
+Set the same four env vars in the Vercel dashboard
+(`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `VOYAGE_API_KEY`,
+`SOSTENUTO_AUTH_TOKEN`). Connector URL: `https://your-app.vercel.app/mcp`.
+Vercel's cold starts are fast (~1 s) and our calls are quick, so the
+function-timeout limits don't bite — there's no long-lived stream to cut
+off. (`api/` and `vercel.json` are repo-only; they're excluded from the
+npm package.)
+
 **Auth reality.** A custom remote connector is only as private as its
 token. Use a long random `SOSTENUTO_AUTH_TOKEN`, serve over HTTPS only
 (every platform terminates TLS for you), and rotate the token if it ever

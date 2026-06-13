@@ -49,7 +49,7 @@ The classification executor is pluggable: Anthropic API, any OpenAI-compatible e
 - **Local (Claude Desktop / Code)** — add it to your client config as a stdio command. Private by construction; no `PORT` needed.
 - **Remote (Claude web / mobile)** — set `PORT` and it serves the MCP transport over HTTP so you can add it as a custom connector. **Fail-closed**: refuses to start without `SOSTENUTO_AUTH_TOKEN`, since a remote endpoint exposes your memory to the network. Token via `Authorization: Bearer` header or `?token=` query.
 
-Both modes and the deploy story are in [docs/deployment-patterns.md](docs/deployment-patterns.md).
+Both modes and the deploy story — persistent-process hosts and a ready **Vercel** adapter (`api/mcp.js` + `vercel.json`) — are in [docs/deployment-patterns.md](docs/deployment-patterns.md).
 
 ## Status
 

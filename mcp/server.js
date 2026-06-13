@@ -166,7 +166,7 @@ export function buildServer({ supabase, embedder, store }) {
 
 // ─── Auth ────────────────────────────────────────────────────────────
 
-function tokensMatch(a, b) {
+export function tokensMatch(a, b) {
   const ba = Buffer.from(String(a ?? ""));
   const bb = Buffer.from(String(b ?? ""));
   if (ba.length !== bb.length) return false; // length leak is acceptable here

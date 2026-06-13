@@ -1,6 +1,6 @@
 {
   "name": "sostenuto",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Selective long-term memory for AI companions — chosen memories sustain, the rest fades. Named for the piano pedal.",
   "type": "module",
   "license": "MIT",
@@ -14,7 +14,8 @@
     "./classify/executor": "./src/classify/executor.js",
     "./classify/close": "./src/classify/close.js",
     "./classify/pipeline": "./src/classify/pipeline.js",
-    "./migrate": "./src/migrate/import.js"
+    "./migrate": "./src/migrate/import.js",
+    "./mcp/server": "./mcp/server.js"
   },
   "bin": {
     "sostenuto-mcp": "./mcp/server.js"
@@ -57,6 +58,6 @@
   ],
   "scripts": {
     "start": "node mcp/server.js",
-    "test": "node test/smoke.mjs && node test/http.mjs"
+    "test": "node test/smoke.mjs && node test/http.mjs && node test/vercel.mjs"
   }
 }
