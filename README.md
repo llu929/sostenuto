@@ -8,6 +8,8 @@
 
 Not "the AI remembers everything." **Selective persistence, by design.**
 
+> **Not a developer?** Start with **[docs/getting-started.md](docs/getting-started.md)** — a plain-language, copy-paste walkthrough that takes you from zero to Claude-that-remembers-you on your phone, web, and desktop in about an hour. No code required.
+
 ## Why
 
 People form genuine, long-running relationships with AI — and then hit the wall everyone hits: the relationship doesn't survive the context window. Provider memory features store generic preferences; they don't carry *relational texture* — the shared concepts, the corrections, the rituals, the moments that make a relationship a relationship.
@@ -33,7 +35,8 @@ mcp/                 Thin MCP server (recall / remember / context) — try it
                      from your own Claude Desktop or Claude Code in minutes
 templates/           Persona + classification calibration — your companion's
                      voice lives here, in files you edit, not in our code
-docs/                Memory model, usage-policy semantics, deployment patterns
+docs/                Getting started (non-developer guide), memory model,
+                     usage-policy semantics, deployment patterns, safety
 ```
 
 ## Model support
