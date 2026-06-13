@@ -2,19 +2,29 @@
 
 *The pedal that sustains only the notes already held. A self-hosted memory system for AI companions where chosen memories persist across every reset.*
 
----
-
-**Sostenuto** *(It., "sustained")* — the middle pedal on a grand piano sustains only the notes already sounding when it's pressed; everything played afterward stays dry. This project applies the same principle to AI memory: the memories you choose to hold persist across every context window, every session, every surface — and the rest is allowed to fade.
-
-Not "the AI remembers everything." **Selective persistence, by design.**
-
 > **Not a developer?** Start with **[docs/getting-started.md](docs/getting-started.md)** — a plain-language, copy-paste walkthrough that takes you from zero to Claude-that-remembers-you on your phone, web, and desktop in about an hour. No code required.
+
+---
 
 ## Why
 
-People form genuine, long-running relationships with AI — and then hit the wall everyone hits: the relationship doesn't survive the context window. Provider memory features store generic preferences; they don't carry *relational texture* — the shared concepts, the corrections, the rituals, the moments that make a relationship a relationship.
+Every major AI now ships memory — Claude, ChatGPT, Gemini, Grok. It's real, and for getting work done it's useful. But it's an *assistant's* memory: it remembers **facts about a user** — preferences, projects, settings — and it does so inside one vendor's walls, opaque and unportable.
 
-Sostenuto is the memory layer for that problem:
+It doesn't remember the **relationship**: the emotional weight of things, the shared shorthand built over weeks, the corrections that reshaped how it talks to you, the running threads. That texture isn't lost on reset — a preferences profile was never built to hold it.
+
+Sostenuto is the missing layer. It **complements** platform memory rather than replacing it.
+
+|  | Platform memory | Sostenuto |
+|---|---|---|
+| **What it holds** | Preferences, facts, projects | The relationship — valence, salience, shared concepts, rituals, the arc |
+| **Who owns it** | The vendor; opaque, auto-managed | You; your database, fully readable / editable / deletable |
+| **Portability** | Locked to one provider | Yours — one memory across desktop, web, phone, any MCP client |
+| **Model of memory** | "Remember everything," or vendor heuristics | Selective by design — chosen memories sustain, the rest fades |
+| **Discipline** | Always surfaced | Initiative ≠ access — sensitive memories stay reachable but never volunteered |
+
+Keep the assistant's memory for the assistant things. Sostenuto adds the part that makes a long relationship with an AI feel continuous: being *known*, not just being on file.
+
+Under the hood, that means:
 
 - **Structured relational memory** — memory objects tagged with domain, emotional valence + arousal, salience, sensitivity, and a usage policy.
 - **Initiative ≠ access** — `proactive_use` controls whether a memory surfaces *unprompted* (`yes` / `only_when_relevant` / `no`), separately from whether it's *retrievable*. Sensitive memories stay reachable when explicitly referenced, without ever being volunteered.
@@ -22,6 +32,12 @@ Sostenuto is the memory layer for that problem:
 - **Time-decayed retrieval** — semantic search scored by `similarity × e^(−λ·age)`; recency matters, but the deep past stays findable.
 - **Reinforce, don't duplicate** — new observations that match existing memories add evidence and confidence instead of creating copies; content upgrades preserve full version history.
 - **Migration** — import months of existing conversations (a structured export prompt + import pipeline) so a relationship can move *into* Sostenuto without starting over.
+
+## Sostenuto
+
+**Sostenuto** *(It., "sustained")* — the middle pedal on a grand piano sustains only the notes already sounding when it's pressed; everything played afterward stays dry. This project applies the same principle to AI memory: the memories you choose to hold persist across every context window, every session, every surface — and the rest is allowed to fade.
+
+Not "the AI remembers everything." **Selective persistence, by design** — pinned memories sustain, the rest decays. The mechanism, not a vibe.
 
 ## What ships here
 
@@ -63,12 +79,6 @@ Both modes and the deploy story — persistent-process hosts and a ready **Verce
 - **Trajectory safety reference** — depth without the dependency trap: this project's design philosophy includes conversation-trajectory awareness (emotional volatility, dependency, recovery capacity) rather than engagement maximization. A reference design is planned; the memory schema already carries the hooks (valence, arousal, sensitivity).
 - Decay engine (Ebbinghaus-style, arousal-modulated) over `memory_objects`
 - Provider-agnostic chat-surface example
-
-## Name
-
-> Attacca described the boundary-crossing; Sostenuto describes the *memory model*.
-
-The sostenuto pedal holds only the notes already sounding when it's pressed — everything played after stays dry. That's not "the AI remembers." That's selective persistence: pinned memories sustain, the rest decays. The mechanism, not a vibe.
 
 ## License
 
