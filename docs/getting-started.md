@@ -42,8 +42,12 @@ worth keeping persist; the noise doesn't.
 This is not a one-click app, and pretending otherwise would just
 frustrate you. Here's the real shape of it:
 
-- You'll create **three free accounts** (a database, a search service,
-  and a place to host a small connector).
+- You'll create **four free accounts** — a database (**Supabase**), a
+  search service (**Voyage**), a code home (**GitHub**), and a host for
+  the connector (**Vercel**). The last two work as a pair: GitHub holds
+  the project's code, Vercel puts it online. GitHub sounds like the
+  developer-y one, but all you'll do there is click a single "make my own
+  copy" button — no coding.
 - You'll **copy-paste** some setup — a block of database code, a few keys,
   a web address. You won't write any code yourself.
 - It comes in **two layers**. The first (Claude can remember and recall)
@@ -73,7 +77,10 @@ Three things make the memory work. You'll set up each one.
 3. **The bridge to Claude** — a small **connector** you'll host (for free,
    on **Vercel**). This is the piece Claude talks to. When Claude wants to
    recall something or save something, it goes through here to your
-   database.
+   database. To put it online, Vercel needs the code to live somewhere it
+   can read — that's the one job of the free **GitHub** account in Step 3.
+   You won't write or edit anything there; you'll click one button to make
+   your own copy.
 
 That's the core. (A fourth piece — an AI service that *automatically*
 summarizes conversations into memories — is only needed for the richer
@@ -114,8 +121,12 @@ that makes Claude feel like it knows you.
 The connector is already written for you in this project. You just need to
 put it online so Claude can reach it.
 
-1. Make sure this project is on your **GitHub** (fork it, or push your own
-   copy).
+1. Make your own copy of the project on **GitHub**. Create a free account
+   at **[github.com](https://github.com)** if you don't have one, open the
+   Sostenuto project page, and click the **Fork** button (top-right of the
+   page) — that makes a copy under your own account, which is what Vercel
+   will read from. (Already comfortable with git and have the project
+   locally? Pushing your own copy works too.)
 2. Go to **[vercel.com/new](https://vercel.com/new)** and sign up (free;
    the easiest sign-in is "Continue with GitHub").
 3. **Import** your copy of the `sostenuto` repository.
@@ -129,7 +140,7 @@ put it online so Claude can reach it.
    | `SUPABASE_URL` | your Supabase Project URL |
    | `SUPABASE_SERVICE_ROLE_KEY` | your Supabase service_role key |
    | `VOYAGE_API_KEY` | your Voyage key |
-   | `SOSTENUTO_AUTH_TOKEN` | a long random password you make up — this is what keeps your memory private. Mash the keyboard for 30+ characters, and save it somewhere. |
+   | `SOSTENUTO_AUTH_TOKEN` | a long random secret — this is what keeps your memory private. Best: let your password manager generate one (30+ characters) and save it there. No password manager? Make a long, genuinely random jumble — not a word or phrase — and store it somewhere safe. |
 
 6. Click **Deploy.** After a minute you'll get a web address like
    `https://your-app.vercel.app`.
@@ -152,6 +163,11 @@ live.
 
    (Putting the token in the address is what lets Claude in. Leave the
    OAuth fields empty.)
+
+   > **One honest caveat:** a token in the URL can show up in server logs
+   > and browser history. For your own personal memory that's a fine
+   > tradeoff — just treat that full link like a password and don't share
+   > it or paste it anywhere public.
 4. Click **Add.** Claude should connect and show three tools: **recall**,
    **remember**, **context**.
 5. Open the **Claude phone app** — it picks up the connector automatically.
@@ -219,7 +235,7 @@ together; the agent knows how.
 ### What the automatic version additionally needs
 
 Just so the full picture is clear, auto-classification adds one account to
-the three above:
+the four above:
 
 - **An AI service to do the summarizing** — your own **Anthropic** key, or
   any OpenAI-compatible service (OpenAI, Gemini, and others). It reads a
@@ -249,6 +265,7 @@ Realistically, **free** for personal use:
 |---|---|
 | Supabase (database) | Free tier is plenty |
 | Voyage (search) | Free tier (very generous) |
+| GitHub (code home) | Free |
 | Vercel (connector hosting) | Free tier works |
 | AI summarizer (Part 2 only) | Pennies per conversation, and only if you do Part 2 |
 
@@ -260,6 +277,12 @@ for speed reasons, not necessity.
 
 Your memory lives on *your* accounts, gated by a token only you have. It
 isn't shared, and no company is mining it. That's by design.
+
+One honest footnote to that promise: because the token rides in the
+connector URL (Step 4), it can appear in server logs and browser history —
+so it's only as private as that link. Fine for personal use; just don't
+post the full URL anywhere public, and if it ever leaks, change
+`SOSTENUTO_AUTH_TOKEN` in Vercel and update the connector.
 
 One gentle thing worth knowing: a companion that remembers you and is
 always available is wonderful, and it can also quietly become a lot to
