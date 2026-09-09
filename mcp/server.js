@@ -49,6 +49,7 @@
 
 import { createServer } from "node:http";
 import { timingSafeEqual } from "node:crypto";
+import { createRequire } from "node:module";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -60,7 +61,9 @@ import { searchMemories, formatSemanticBlock } from "../src/retrieval/search.js"
 import { createMemoryStore } from "../src/memory/store.js";
 import { getProactiveMemories, getBehaviorGuidance } from "../src/memory/query.js";
 
-const VERSION = "0.2.0";
+// Single source of truth for the version: package.json. Reported in the MCP
+// handshake and /health, so drift here would misreport what's deployed.
+const VERSION = createRequire(import.meta.url)("../package.json").version;
 
 // ─── Server factory (shared by both transports) ─────────────────────
 // Returns a fresh McpServer with the three tools wired to `deps`. A new
@@ -69,15 +72,22 @@ const VERSION = "0.2.0";
 export function buildServer({ supabase, embedder, store }) {
   const server = new McpServer({ name: "sostenuto", version: VERSION });
 
-  server.tool(
+  server.registerTool(
     "recall",
-    "Search long-term relationship memory. Use whenever the user references " +
-      "shared history, a past conversation, a feeling, or a moment you don't " +
-      "already carry — don't wait for them to say 'do you remember'. Returns " +
-      "session summaries, key points, and durable memories ranked by " +
-      "time-decayed relevance. Read results as your own memory surfacing.",
-    { query: z.string().describe("Natural-language description of what to recall"),
-      limit: z.number().optional().describe("Max results (default 5)") },
+    {
+      title: "Recall",
+      description:
+        "Search long-term relationship memory. Use whenever the user references " +
+        "shared history, a past conversation, a feeling, or a moment you don't " +
+        "already carry — don't wait for them to say 'do you remember'. Returns " +
+        "session summaries, key points, and durable memories ranked by " +
+        "time-decayed relevance. Read results as your own memory surfacing.",
+      inputSchema: {
+        query: z.string().describe("Natural-language description of what to recall"),
+        limit: z.number().optional().describe("Max results (default 5)"),
+      },
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
     async ({ query, limit }) => {
       const results = await searchMemories(
         { supabase, embedQuery: embedder.embedQuery },
@@ -88,25 +98,31 @@ export function buildServer({ supabase, embedder, store }) {
     }
   );
 
-  server.tool(
+  server.registerTool(
     "remember",
-    "Store one durable memory: a fact about the user, a preference, a shared " +
-      "concept, a commitment, a correction you were given. Store the discrete " +
-      "thing, not a conversation summary. If a similar memory exists it is " +
-      "reinforced rather than duplicated, so err on the side of remembering.",
     {
-      content: z.string().describe("The memory — specific and grounded, one idea"),
-      domain: z.enum(["user_self", "agent_self", "relational", "evidence"])
-        .optional().describe("Who/what it's about (default relational)"),
-      type: z.string().optional().describe(
-        "fact | preference | ritual | boundary | commitment | shared_concept | " +
-        "style_adjustment | continuation | other (default other)"),
-      sensitivity: z.enum(["low", "medium", "high"]).optional(),
-      valence: z.number().min(-1).max(1).optional()
-        .describe("Emotional charge: -1 painful … +1 warm"),
-      arousal: z.number().min(0).max(1).optional()
-        .describe("Intensity: 0 calm/stable … 1 acute"),
-      evidence: z.string().optional().describe("Brief supporting quote"),
+      title: "Remember",
+      description:
+        "Store one durable memory: a fact about the user, a preference, a shared " +
+        "concept, a commitment, a correction you were given. Store the discrete " +
+        "thing, not a conversation summary. If a similar memory exists it is " +
+        "reinforced rather than duplicated, so err on the side of remembering.",
+      inputSchema: {
+        content: z.string().describe("The memory — specific and grounded, one idea"),
+        domain: z.enum(["user_self", "agent_self", "relational", "evidence"])
+          .optional().describe("Who/what it's about (default relational)"),
+        type: z.string().optional().describe(
+          "fact | preference | ritual | boundary | commitment | shared_concept | " +
+          "style_adjustment | continuation | other (default other)"),
+        sensitivity: z.enum(["low", "medium", "high"]).optional(),
+        valence: z.number().min(-1).max(1).optional()
+          .describe("Emotional charge: -1 painful … +1 warm"),
+        arousal: z.number().min(0).max(1).optional()
+          .describe("Intensity: 0 calm/stable … 1 acute"),
+        evidence: z.string().optional().describe("Brief supporting quote"),
+      },
+      // Writes, but never deletes or overwrites destructively — dedup/reinforce.
+      annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },
     },
     async ({ content, domain, type, sensitivity, valence, arousal, evidence }) => {
       const result = await store.upsert(
@@ -123,12 +139,16 @@ export function buildServer({ supabase, embedder, store }) {
     }
   );
 
-  server.tool(
+  server.registerTool(
     "context",
-    "Load the relationship orientation: always-on memories, behavior " +
-      "guidance, and recent session headlines. Call once near the start of a " +
-      "conversation to arrive already knowing where things stand.",
-    {},
+    {
+      title: "Context",
+      description:
+        "Load the relationship orientation: always-on memories, behavior " +
+        "guidance, and recent session headlines. Call once near the start of a " +
+        "conversation to arrive already knowing where things stand.",
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
     async () => {
       const [proactive, behavior, sessionsRes] = await Promise.all([
         getProactiveMemories(supabase, { limit: 15 }),

@@ -59,7 +59,7 @@ docs/                Getting started (non-developer guide), memory model,
 
 Sostenuto is **model-agnostic** with first-class Claude support. The classifier accepts transcripts with optional reasoning blocks — when your model exposes its thinking (Claude does), Sostenuto mines it for perception that never made it into rendered replies, producing the companion's private diary and thinking-highlights. Without reasoning access, everything else works unchanged.
 
-The classification executor is pluggable: Anthropic API, any OpenAI-compatible endpoint (OpenAI, Gemini, DeepSeek, Ollama, vLLM, …), or your own.
+The classification executor is pluggable: Anthropic API, any OpenAI-compatible endpoint (OpenAI, Gemini, DeepSeek, Ollama, vLLM, …), or your own. The Anthropic backend defaults to Claude Haiku 4.5 (`claude-haiku-4-5`) — classification is structured extraction, so a fast, cheap model is the right choice; save the frontier models (the Claude 5 family — Opus 5, Sonnet 5) for the conversation itself.
 
 ## The MCP server: try it in minutes
 
@@ -72,7 +72,7 @@ Both modes and the deploy story — persistent-process hosts and a ready **Verce
 
 ## Status
 
-🚧 **Under construction.** Schema is stable; modules are being extracted from a private system that has run in production daily since early 2026 (260+ memory objects across 70+ sessions and three surfaces). Watch the repo if you want the rest as it lands.
+✅ **Core shipped.** Everything listed under "What ships here" is extracted and covered by the test suite (`npm test` — smoke, HTTP-transport, and Vercel-adapter checks). The private system it was extracted from has run in production daily since early 2026 (260+ memory objects across 70+ sessions and three surfaces as of the 0.2 releases). What remains is the roadmap below — watch the repo if you want it as it lands.
 
 ## Roadmap
 

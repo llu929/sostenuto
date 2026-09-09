@@ -19,7 +19,7 @@ const DEFAULT_MAX_TOKENS = 8000;
 /** Anthropic Messages API backend. */
 export function createAnthropicExecutor({
   apiKey,
-  model = "claude-haiku-4-5-20251001",
+  model = "claude-haiku-4-5",
   baseUrl = "https://api.anthropic.com",
 } = {}) {
   if (!apiKey) throw new Error("createAnthropicExecutor: apiKey required");
